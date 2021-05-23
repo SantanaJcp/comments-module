@@ -21,22 +21,22 @@
     >
       <strong>{{comment.author}}</strong>
       <span class="text-xs text-gray-400 ml-2"> {{ comment.time }}</span>
-      <input v-if="isEditing" @keyup.enter="isEditing = !isEditing" v-model="comment.text" class=" text-sm bg-gray-100  rounded border border-gray-400 leading-normal  w-full h-10 py-2 px-3 font-medium placeholder-gray-500 focus:outline-none focus:bg-white" name="body" placeholder='Type Your Comment'/>
+      <input v-if="comment.isEditing" @keyup.enter="comment.isEditing = !comment.isEditing" v-model="comment.text" class=" text-sm bg-gray-100  rounded border border-gray-400 leading-normal  w-full h-10 py-2 px-3 font-medium placeholder-gray-500 focus:outline-none focus:bg-white" name="body" placeholder='Type Your Comment'/>
       <p v-else class="text-sm">
         {{comment.text}}
       </p>
       <div class="mt-4 flex items-center inline-block">
-        <div v-if="hideReplies"  class="text-sm text-gray-500 font-semibold mr-4" @click="hideReplies = !hideReplies">
+        <div v-if="comment.hideReplies"  class="text-sm text-gray-500 font-semibold mr-4" @click="comment.hideReplies = !comment.hideReplies">
           {{ comment.replies.length }} Replies</div>
         <div class="text-sm  text-gray-500 font-semibold "
              @click="like()"
-        :class="{'text-red-600':liked}"> {{comment.likes}} Likes</div>
+        :class="{'text-red-600':comment.liked}"> {{comment.likes}} Likes</div>
         <div class="text-sm ml-auto  text-gray-500 font-semibold "
-             @click="isEditing = !isEditing"> Edit</div>
+             @click="comment.isEditing = !comment.isEditing"> Edit</div>
       </div>
 
-      <h4 v-if="!hideReplies"
-          @click="hideReplies = !hideReplies"
+      <h4 v-if="!comment.hideReplies"
+          @click="comment.hideReplies = !comment.hideReplies"
           class="
                 my-5
                 uppercase
@@ -48,7 +48,7 @@
       >
         Replies
       </h4>
-      <div v-if="!hideReplies" class="space-y-4">
+      <div v-if="!comment.hideReplies" class="space-y-4">
         <reply v-for="reply in comment.replies" :reply="reply"/>
         <label>
           <input @keyup.enter="addReply" v-model="replyText" class=" text-sm bg-gray-100  rounded border border-gray-400 leading-normal  w-full h-10 py-2 px-3 font-medium placeholder-gray-500 focus:outline-none focus:bg-white" name="body" placeholder='Type Your Comment'/>
@@ -66,9 +66,6 @@ export default {
   data() {
     return {
       replyText: "",
-      hideReplies:true,
-      liked: false,
-      isEditing: false
     }
   },
   props: {
@@ -82,8 +79,8 @@ export default {
   methods: {
     like() {
       let actualLikes = this.comment.likes;
-      this.comment.likes = this.liked ? actualLikes -1 : actualLikes +1;
-      this.liked = !this.liked;
+      this.comment.likes = this.comment.liked ? actualLikes -1 : actualLikes +1;
+      this.comment.liked = !this.comment.liked;
     },
     addReply() {
       let reply = new ReplyClass()
